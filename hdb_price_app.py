@@ -154,10 +154,10 @@ if rf is not None and gb is not None and xgb is not None and lr is not None and 
         origin = (latitude, longitude)
 
     # Load the location data for amenities
-    mrt_location = pd.read_csv('data\mrt_address.csv')  
-    school_location = pd.read_csv('data\schools_address.csv')  
-    supermarket_location = pd.read_csv('data\shops_address.csv')  
-    hawker_location = pd.read_csv('data\hawkers_address.csv')  
+    mrt_location = pd.read_csv('data/mrt_address.csv')  
+    school_location = pd.read_csv('data/schools_address.csv')  
+    supermarket_location = pd.read_csv('data/shops_address.csv')  
+    hawker_location = pd.read_csv('data/hawkers_address.csv')  
 
     # Calculate distances to amenities
     nearest_mrt_distance = min([geodesic(origin, (row['latitude'], row['longitude'])).meters for _, row in mrt_location.iterrows()])
