@@ -112,7 +112,7 @@ def cal_lease_remaining_years(lease_commence_date, year_of_sale):
 def get_address(block, street_name):
     return f"{block} {street_name}"
 
-rf, gb, xgb, lr, dt, meta_model, scaler = load_models()  # Make sure to also include xgb in the unpacking
+rf, gb, xgb, lr, dt, meta_model, scaler = load_models()  
 
 # Check if models are loaded correctly
 if rf is not None and gb is not None and xgb is not None and lr is not None and dt is not None and meta_model is not None:
