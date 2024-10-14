@@ -62,8 +62,8 @@ st.markdown("""<style>
     }
     /* Style for buttons */
     .stButton > button {
-        background-color: #e3f2fd 
-        color: #1b3344 
+        background-color: #e3f2fd; 
+        color: #1b3344; 
         border: none;
         border-radius: 5px;
         font-size: 16px;
@@ -154,10 +154,10 @@ if rf is not None and gb is not None and xgb is not None and lr is not None and 
         origin = (latitude, longitude)
 
     # Load the location data for amenities
-    mrt_location = pd.read_csv('C:\\Users\\Krithika JK\\Documents\\GitHub\\FYP\\data\\mrt_address.csv')  
-    school_location = pd.read_csv('C:\\Users\\Krithika JK\\Documents\\GitHub\\FYP\\data\\schools_address.csv')  
-    supermarket_location = pd.read_csv('C:\\Users\\Krithika JK\\Documents\\GitHub\\FYP\\data\\shops_address.csv')  
-    hawker_location = pd.read_csv('C:\\Users\\Krithika JK\\Documents\\GitHub\\FYP\\data\\hawkers_address.csv')  
+    mrt_location = pd.read_csv('data\mrt_address.csv')  
+    school_location = pd.read_csv('data\schools_address.csv')  
+    supermarket_location = pd.read_csv('data\shops_address.csv')  
+    hawker_location = pd.read_csv('data\hawkers_address.csv')  
 
     # Calculate distances to amenities
     nearest_mrt_distance = min([geodesic(origin, (row['latitude'], row['longitude'])).meters for _, row in mrt_location.iterrows()])
@@ -387,8 +387,8 @@ with col1:
                 # Add labels for the gradient bar with improved alignment
                 st.markdown("""
                             <div style='display: flex; justify-content: space-between;'>
-                                <span style='color: 1b3344'>Low Price</span>
-                                <span style='color: 1b3344'>High Price</span>
+                                <span style='color: #1b3344'>Low Price</span>
+                                <span style='color: #1b3344'>High Price</span>
                             </div>
                         """, unsafe_allow_html=True)
 
