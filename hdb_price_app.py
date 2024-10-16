@@ -86,7 +86,7 @@ if rf is not None and gb is not None and xgb is not None and lr is not None and 
     nearest_hawkers_distance = min([geodesic(origin, (row['latitude'], row['longitude'])).meters for _, row in hawker_location.iterrows()])
 
     # Calculate distance from CBD
-    cbd_distance = geodesic(origin, (1.2830, 103.8513)).meters  # CBD coordinates
+    cbd_distance = geodesic(origin, (1.287953, 103.851784)).meters  # CBD coordinates
 
     # Calculate lease remaining years using lease_commence_date
     calculated_remaining_lease = cal_lease_remaining_years(lease_commence_date, year_of_sale)
@@ -177,7 +177,7 @@ with col1:
                 nearest_hawkers_distance = min([geodesic(origin, (row['latitude'], row['longitude'])).meters for _, row in hawker_location.iterrows()])
 
                 # Calculate distance from CBD
-                cbd_distance = geodesic(origin, (1.2830, 103.8513)).meters  # CBD coordinates
+                cbd_distance = geodesic(origin, (1.287953, 103.851784)).meters  # CBD coordinates
 
                 # Add the distances to the town_df
                 town_df['nearest_mrt_distance'] = nearest_mrt_distance
