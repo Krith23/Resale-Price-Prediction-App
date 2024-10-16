@@ -1,55 +1,16 @@
 import streamlit as st
 import numpy as np
-import joblib
+# import joblib
 import pandas as pd
-from xgboost import XGBRegressor
-import requests
+# from xgboost import XGBRegressor
 from geopy.distance import geodesic
 import pydeck as pdk  
 from PIL import Image
+from models import load_models
+from utils import get_lat_long, cal_lease_remaining_years, get_address
+from config import town_coordinates, towns, flat_types, flat_models, expected_columns
 
 st.set_page_config(layout="wide")
-
-# Town Coordinates
-town_coordinates = {
-    'ANG MO KIO': (1.375, 103.848), 
-    'BEDOK': (1.324, 103.929), 
-    'BISHAN': (1.358, 103.848), 
-    'BUKIT BATOK': (1.366, 103.763),
-    'BUKIT MERAH': (1.274, 103.822),
-    'BUKIT TIMAH': (1.333, 103.776), 
-    'CENTRAL AREA': (1.299, 103.849), 
-    'CHOA CHU KANG': (1.389, 103.749), 
-    'CLEMENTI': (1.317, 103.764),    
-    'GEYLANG': (1.313, 103.867), 
-    'HOUGANG': (1.367, 103.891), 
-    'JURONG EAST': (1.334, 103.733), 
-    'JURONG WEST': (1.350, 103.706),
-    'KALLANG/WHAMPOA': (1.316, 103.857), 
-    'MARINE PARADE': (1.304, 103.901), 
-    'QUEENSTOWN': (1.290, 103.798), 
-    'SENGKANG': (1.375, 103.895),
-    'SERANGOON': (1.358, 103.870), 
-    'TAMPINES': (1.351, 103.940), 
-    'TOA PAYOH': (1.334, 103.846), 
-    'WOODLANDS': (1.438, 103.786), 
-    'YISHUN': (1.426, 103.836),
-    'LIM CHU KANG': (1.437, 103.709), 
-    'SEMBAWANG': (1.450, 103.834), 
-    'BUKIT PANJANG': (1.377, 103.769), 
-    'PASIR RIS': (1.372, 103.948),
-    'PUNGGOL': (1.403, 103.903)
-}
-
-# Dropdown options for town, flat type, and flat model
-towns = list(town_coordinates.keys())
-flat_types = ['1 ROOM', '2 ROOM', '3 ROOM', '4 ROOM', '5 ROOM', 'EXECUTIVE', 'MULTI GENERATION']
-flat_models = ['Improved', 'New Generation', 'Model A', 'Standard', 'Simplified',
-               'Model A-Maisonette', 'Apartment', 'Maisonette', 'Terrace',
-               '2-Room', 'Improved-Maisonette', 'Multi Generation',
-               'Premium Apartment', 'Adjoined flat', 'Premium Maisonette',
-               'Model A2', 'DBSS', 'Type S1', 'Type S2', 'Premium Apartment Loft',
-               '3Gen']
 
 st.markdown("""<style>
     /* Change the background color of the entire app to a more pronounced gradient */
@@ -70,47 +31,6 @@ st.markdown("""<style>
         padding: 10px 20px;
     }
 </style>""", unsafe_allow_html=True)
-
-# Load your trained models (excluding decision tree)
-def load_models():
-    try:
-        meta_model = joblib.load('meta_model.pkl')
-        rf = joblib.load('random_forest_model.pkl')
-        gb = joblib.load('gradient_boosting_model.pkl')
-
-        # Load XGBoost model using its load_model method
-        xgb = XGBRegressor()  # Create an instance of XGBRegressor
-        xgb.load_model('xgb_model.json')  # Load the model from JSON file
-
-        lr = joblib.load('linear_regression_model.pkl')
-        dt = joblib.load('decision_tree_model.pkl')
-        scaler = joblib.load('scaler.pkl')
-
-        return rf, gb, xgb, lr, dt, meta_model, scaler
-    except Exception as e:
-        st.error(f"Error loading models: {e}")
-        return None, None, None, None, None, None
-
-def get_lat_long(address):
-    try:
-        url = f"https://www.onemap.gov.sg/api/common/elastic/search?searchVal={address}&returnGeom=Y&getAddrDetails=Y&pageNum=1"
-        response = requests.get(url)
-        data = response.json()
-        if data['found'] > 0:
-            latitude = data['results'][0]['LATITUDE']
-            longitude = data['results'][0]['LONGITUDE']
-            return latitude, longitude
-        else:
-            return None, None
-    except requests.exceptions.RequestException as e:
-        st.error(f"Error fetching data for {address}: {e}")
-        return None, None
-
-def cal_lease_remaining_years(lease_commence_date, year_of_sale):
-    return 99 - (year_of_sale - lease_commence_date)
-
-def get_address(block, street_name):
-    return f"{block} {street_name}"
 
 rf, gb, xgb, lr, dt, meta_model, scaler = load_models()  
 
@@ -196,29 +116,6 @@ if rf is not None and gb is not None and xgb is not None and lr is not None and 
     for flat_model in flat_models:
         input_df[f'flat_model_{flat_model}'] = 1 if selected_flat_model == flat_model else 0
 
-
-    # One-hot encode categorical features
-    # input_df_encoded = pd.get_dummies(input_df, columns=['town', 'flat_type', 'flat_model'], drop_first=True)
-
-    # Define the expected columns based on your training data
-    expected_columns = ['floor_area_sqm', 'nearest_supermarket_distance', 'nearest_school_distance', 'nearest_mrt_distance', 
-                        'nearest_hawkers_distance', 'cbd_distance', 'year_of_sale', 'calculated_remaining_lease', 
-                        'storey_median', 'town_BEDOK', 'town_BISHAN', 'town_BUKIT BATOK', 'town_BUKIT MERAH', 
-                        'town_BUKIT PANJANG', 'town_BUKIT TIMAH', 'town_CENTRAL AREA', 'town_CHOA CHU KANG', 
-                        'town_CLEMENTI', 'town_GEYLANG', 'town_HOUGANG', 'town_JURONG EAST', 'town_JURONG WEST', 
-                        'town_KALLANG/WHAMPOA', 'town_LIM CHU KANG', 'town_MARINE PARADE', 'town_PASIR RIS', 
-                        'town_PUNGGOL', 'town_QUEENSTOWN', 'town_SEMBAWANG', 'town_SENGKANG', 'town_SERANGOON', 
-                        'town_TAMPINES', 'town_TOA PAYOH', 'town_WOODLANDS', 'town_YISHUN', 'flat_model_3Gen', 
-                        'flat_model_Adjoined flat', 'flat_model_Apartment', 'flat_model_DBSS', 'flat_model_Improved', 
-                        'flat_model_Improved-Maisonette', 'flat_model_Maisonette', 'flat_model_Model A', 
-                        'flat_model_Model A-Maisonette', 'flat_model_Model A2', 'flat_model_Multi Generation', 
-                        'flat_model_New Generation', 'flat_model_Premium Apartment', 'flat_model_Premium Apartment Loft', 
-                        'flat_model_Premium Maisonette', 'flat_model_Simplified', 'flat_model_Standard', 'flat_model_Terrace', 
-                        'flat_model_Type S1', 'flat_model_Type S2', 'flat_type_2 ROOM', 'flat_type_3 ROOM', 'flat_type_4 ROOM', 
-                        'flat_type_5 ROOM', 'flat_type_EXECUTIVE', 'flat_type_MULTI GENERATION']
-
-
-
     input_df = input_df.reindex(columns=expected_columns, fill_value=0)
     # st.write(input_df)
 
@@ -241,17 +138,15 @@ with col1:
             # Make the final prediction using the meta-model
             y_new_pred = meta_model.predict(X_new_meta)
 
-
-
             st.write("#### Predicted Resale Price: ${:.2f}".format(y_new_pred[0]))           # Display the predicted resale price
 
-
             # Prepare data for Pydeck chart
-            town_df_base = input_df.copy().drop(columns=[                 # Create a copy of input_df 
+            town_df_base = input_df.copy().drop(columns=[                
                 'nearest_supermarket_distance',
                 'nearest_mrt_distance',
                 'nearest_school_distance',
-                'nearest_hawkers_distance'
+                'nearest_hawkers_distance',
+                'cbd_distance'
             ])
 
             # Create a DataFrame for all towns
@@ -289,7 +184,7 @@ with col1:
                 town_df['nearest_supermarket_distance'] = nearest_supermarket_distance
                 town_df['nearest_school_distance'] = nearest_school_distance
                 town_df['nearest_hawkers_distance'] = nearest_hawkers_distance
-
+                town_df['cbd_distance'] = cbd_distance
 
                 town_df = town_df.reindex(columns=expected_columns, fill_value=0)
                 # st.write(town_df)
@@ -346,7 +241,9 @@ with col1:
                     longitude=103.8198,  # Singapore Longitude
                     zoom=10.5,
                     pitch=0,
-                    map_style="mapbox://styles/mapbox/light-v11"  # Light mode map style
+                    # height=100,
+                    # width=100,
+                    # map_style="mapbox://styles/mapbox/light-v11"  # Light mode map style
 
                 ),
                 layers=[
@@ -355,7 +252,7 @@ with col1:
                         data=predictions_df,
                         get_position="[longitude, latitude]",  # Ensure this matches your DataFrame structure
                         get_radius=700,
-                        get_color="color",  # Use the 'color' column for the heatmap effect
+                        get_color="color",  
                         pickable=True,
                         opacity=0.6,
 
@@ -363,7 +260,7 @@ with col1:
                 ],
                 tooltip={
                     "html": "<b>Town:</b>{town}<br/><b>Predicted Price:</b> {formatted_price}",
-                    "style": {"color": "white"},  # Adjust color as needed for visibility
+                    "style": {"color": "white"},  
                 },
             )
 
@@ -372,7 +269,7 @@ with col1:
                 st.pydeck_chart(deck)
 
                 # Generate a gradient image
-                def create_gradient_image(width=400, height=20):
+                def create_gradient_image(width=400, height=10):
                     gradient = np.zeros((height, width, 3), dtype=np.uint8)
                     for x in range(width):
                         normalized_price = x / width  # Normalized price for color mapping
@@ -387,8 +284,8 @@ with col1:
                 # Add labels for the gradient bar with improved alignment
                 st.markdown("""
                             <div style='display: flex; justify-content: space-between;'>
-                                <span style='color: #1b3344'>Low Price</span>
-                                <span style='color: #1b3344'>High Price</span>
+                                <strong style='color: #1b3344'>Lowest Price</strong>
+                                <strong style='color: #1b3344'>Highest Price</strong>
                             </div>
                         """, unsafe_allow_html=True)
 
