@@ -32,10 +32,10 @@ st.markdown("""<style>
     }
 </style>""", unsafe_allow_html=True)
 
-rf, gb, xgb, lr, dt, meta_model, scaler = load_models()  
+rf, gb, xgb, dt, meta_model, scaler = load_models()  
 
 # Check if models are loaded correctly
-if rf is not None and gb is not None and xgb is not None and lr is not None and dt is not None and meta_model is not None:
+if rf is not None and gb is not None and xgb is not None and dt is not None and meta_model is not None:
     # Streamlit app title
     st.markdown("<h1 style='text-align: center; '>🏠 HDB Resale Price Prediction</h1>", unsafe_allow_html=True)
 
@@ -129,11 +129,10 @@ with col1:
             rf_pred_new = rf.predict(input_scaled)
             gb_pred_new = gb.predict(input_scaled)
             xgb_pred_new = xgb.predict(input_scaled)
-            lr_pred_new = lr.predict(input_scaled)
             dt_pred_new = dt.predict(input_scaled)
 
             # Combine the predictions into a single feature matrix for the meta-model
-            X_new_meta = np.column_stack((rf_pred_new, gb_pred_new, lr_pred_new, dt_pred_new, xgb_pred_new))
+            X_new_meta = np.column_stack((rf_pred_new, gb_pred_new, dt_pred_new, xgb_pred_new))
 
             # Make the final prediction using the meta-model
             y_new_pred = meta_model.predict(X_new_meta)
@@ -196,11 +195,10 @@ with col1:
                 town_rf_pred = rf.predict(town_scaled)
                 town_gb_pred = gb.predict(town_scaled)
                 town_xgb_pred = xgb.predict(town_scaled)
-                town_lr_pred = lr.predict(town_scaled)
                 town_dt_pred = dt.predict(town_scaled)
 
                 # Combine predictions for meta-model
-                town_X_meta = np.column_stack((town_rf_pred, town_gb_pred, town_lr_pred, town_dt_pred, town_xgb_pred))
+                town_X_meta = np.column_stack((town_rf_pred, town_gb_pred, town_dt_pred, town_xgb_pred))
                 town_y_pred = meta_model.predict(town_X_meta)
 
                 # Store predictions along with town coordinates
