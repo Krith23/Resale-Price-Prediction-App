@@ -30,6 +30,9 @@ st.markdown("""<style>
         font-size: 16px;
         padding: 10px 20px;
     }
+    .amenity-label {
+        color: #1b3344;  /* Dark blue font color */
+    }
 </style>""", unsafe_allow_html=True)
 
 rf, gb, xgb, dt, meta_model, scaler = load_models()  
@@ -138,6 +141,14 @@ with col1:
             y_new_pred = meta_model.predict(X_new_meta)
 
             st.write("#### Predicted Resale Price: ${:.2f}".format(y_new_pred[0]))           # Display the predicted resale price
+
+            # Display the minimum distances to each amenity
+            st.markdown("#### Distance to Nearby Amenities:")
+            st.write(f"<span class='amenity-label'>- **Nearest MRT Station:** {nearest_mrt_distance:.2f} meters</span>", unsafe_allow_html=True)
+            st.write(f"<span class='amenity-label'>- **Nearest Supermarket:** {nearest_supermarket_distance:.2f} meters</span>", unsafe_allow_html=True)
+            st.write(f"<span class='amenity-label'>- **Nearest School:** {nearest_school_distance:.2f} meters</span>", unsafe_allow_html=True)
+            st.write(f"<span class='amenity-label'>- **Nearest Hawker Center:** {nearest_hawkers_distance:.2f} meters</span>", unsafe_allow_html=True)
+            st.write(f"<span class='amenity-label'>- **Distance from CBD:** {cbd_distance:.2f} meters</span>", unsafe_allow_html=True)
 
             # Prepare data for Pydeck chart
             town_df_base = input_df.copy().drop(columns=[                
