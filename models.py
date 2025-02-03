@@ -16,4 +16,4 @@ def load_models():
 
         return rf, gb, xgb, dt, meta_model, scaler
     except Exception as e:
-        raise Exception(f"Error loading models: {e}")
+        raise Exception(f"Error loading models:{e}")
