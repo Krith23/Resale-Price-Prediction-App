@@ -288,7 +288,7 @@ with col1:
 
                 # Create and display the gradient image
                 gradient_image = create_gradient_image()
-                st.image(gradient_image, use_column_width=True)
+                st.image(gradient_image, use_container_width=True)
 
                 # Add labels for the gradient bar with improved alignment
                 st.markdown("""
