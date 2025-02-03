@@ -12,28 +12,37 @@ from config import town_coordinates, towns, flat_types, flat_models, expected_co
 
 st.set_page_config(layout="wide")
 
-st.markdown("""<style>
-    /* Change the background color of the entire app to a more pronounced gradient */
-    .stApp {
-        background: linear-gradient(to right, #ade8f4, #48cae4, #00b4d8, #0096c7);  /* Multiple shades of blue */
-    }
-    /* Style for labels */
-    .stMarkdown h1, h2, h3, h4, h5, h6, p {
-        color: #1b3344;  /* Dark blue font color for labels */
-    }
-    /* Style for buttons */
-    .stButton > button {
-        background-color: #e3f2fd; 
-        color: #1b3344; 
-        border: none;
-        border-radius: 5px;
-        font-size: 16px;
-        padding: 10px 20px;
-    }
-    .amenity-label {
-        color: #1b3344;  /* Dark blue font color */
-    }
-</style>""", unsafe_allow_html=True)
+st.markdown("""
+    <style>
+        /* Gradient background for the entire app */
+        .stApp {
+            background: linear-gradient(to right, #ade8f4, #48cae4, #00b4d8, #0096c7);
+        }
+        /* Style for labels (headings, paragraphs) */
+        .stMarkdownContainer h1, h2, h3, h4, h5, h6, p {
+            color: #1b3344;  
+        }
+        /* Style for buttons */
+        .stButton > button {
+            background-color: #e3f2fd; 
+            color: #1b3344; 
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            padding: 10px 20px;
+            transition: 0.3s;
+        }
+        .stButton > button:hover {
+            background-color: #90e0ef;
+        }
+        /* Style for amenity labels */
+        .amenity-label {
+            font-weight: bold;
+            font-size: 16px;
+            color: #1b3344; 
+        }
+    </style>
+""", unsafe_allow_html=True)
 
 rf, gb, xgb, dt, meta_model, scaler = load_models()  
 
@@ -140,15 +149,15 @@ with col1:
             # Make the final prediction using the meta-model
             y_new_pred = meta_model.predict(X_new_meta)
 
-            st.write("#### Predicted Resale Price: ${:.2f}".format(y_new_pred[0]))           # Display the predicted resale price
+            st.markdown("#### Predicted Resale Price: ${:.2f}".format(y_new_pred[0]))           # Display the predicted resale price
 
             # Display the minimum distances to each amenity
             st.markdown("#### Distance to Nearby Amenities:")
-            st.write(f"<span class='amenity-label'>- **Nearest MRT Station:** {nearest_mrt_distance:.2f} meters</span>", unsafe_allow_html=True)
-            st.write(f"<span class='amenity-label'>- **Nearest Supermarket:** {nearest_supermarket_distance:.2f} meters</span>", unsafe_allow_html=True)
-            st.write(f"<span class='amenity-label'>- **Nearest School:** {nearest_school_distance:.2f} meters</span>", unsafe_allow_html=True)
-            st.write(f"<span class='amenity-label'>- **Nearest Hawker Center:** {nearest_hawkers_distance:.2f} meters</span>", unsafe_allow_html=True)
-            st.write(f"<span class='amenity-label'>- **Distance from CBD:** {cbd_distance:.2f} meters</span>", unsafe_allow_html=True)
+            st.markdown(f"<p class='amenity-label'> Nearest MRT Station: {nearest_mrt_distance:.2f} meters</p>", unsafe_allow_html=True)
+            st.markdown(f"<p class='amenity-label'> Nearest Supermarket: {nearest_supermarket_distance:.2f} meters</p>", unsafe_allow_html=True)
+            st.markdown(f"<p class='amenity-label'> Nearest School: {nearest_school_distance:.2f} meters</p>", unsafe_allow_html=True)
+            st.markdown(f"<p class='amenity-label'> Nearest Hawker Center: {nearest_hawkers_distance:.2f} meters</p>", unsafe_allow_html=True)
+            st.markdown(f"<p class='amenity-label'> Distance from CBD: {cbd_distance:.2f} meters</p>", unsafe_allow_html=True)
 
             # Prepare data for Pydeck chart
             town_df_base = input_df.copy().drop(columns=[                
@@ -288,7 +297,7 @@ with col1:
 
                 # Create and display the gradient image
                 gradient_image = create_gradient_image()
-                st.image(gradient_image, use_container_width=True)
+                st.image(gradient_image, use_column_width=True)
 
                 # Add labels for the gradient bar with improved alignment
                 st.markdown("""
