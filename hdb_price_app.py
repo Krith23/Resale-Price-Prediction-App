@@ -51,7 +51,7 @@ if rf is not None and gb is not None and xgb is not None and dt is not None and 
     # Streamlit app title
     st.markdown("<h1 style='text-align: center; '>🏠 HDB Resale Price Prediction</h1>", unsafe_allow_html=True)
 
-    st.header("Input Features")
+    st.markdown("<h2>Input Features</h2>", unsafe_allow_html=True)
 
     st.markdown("<h5>Enter the features of the HDB flat to estimate it's resale price</h5>", unsafe_allow_html=True)
 
@@ -148,11 +148,11 @@ with col1:
 
             # Make the final prediction using the meta-model
             y_new_pred = meta_model.predict(X_new_meta)
-
-            st.markdown("#### Predicted Resale Price: ${:.2f}".format(y_new_pred[0]))           # Display the predicted resale price
+ 
+            st.markdown("<h4>Predicted Resale Price:  ${:.2f}</h4>".format(y_new_pred[0]), unsafe_allow_html=True)
 
             # Display the minimum distances to each amenity
-            st.markdown("#### Distance to Nearby Amenities:")
+            st.markdown("<h4> Distance to Nearby Amenities: </h4>",unsafe_allow_html=True)
             st.markdown(f"<p class='amenity-label'> Nearest MRT Station: {nearest_mrt_distance:.2f} meters</p>", unsafe_allow_html=True)
             st.markdown(f"<p class='amenity-label'> Nearest Supermarket: {nearest_supermarket_distance:.2f} meters</p>", unsafe_allow_html=True)
             st.markdown(f"<p class='amenity-label'> Nearest School: {nearest_school_distance:.2f} meters</p>", unsafe_allow_html=True)
