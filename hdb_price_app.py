@@ -69,7 +69,7 @@ if rf is not None and gb is not None and xgb is not None and dt is not None and 
 
 
     with col2:
-        year_of_sale = st.number_input("**Year of Sale**", min_value=2000, max_value=2024, step=1, value=2019)
+        year_of_sale = st.number_input("**Year of Sale**", min_value=2000, max_value=2100, step=1, value=2019)
         storey_median = st.number_input("**Storey Median**", min_value=1, step=1, value=8)
         lease_commence_date = st.number_input("**Lease Commence Date**", min_value=1950, max_value=2023, step=1, value=1989)
         floor_area_sqm = st.number_input("**Floor Area (sqm)**", min_value=0.0, step=1.0, value=122.00)
